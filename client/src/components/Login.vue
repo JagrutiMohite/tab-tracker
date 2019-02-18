@@ -11,7 +11,7 @@
           name="input-1"
           label="Username/email"
           v-model="email"
-          id="testing"
+          id="email"
         ></v-text-field>
           <br>
           <v-text-field
@@ -19,7 +19,7 @@
           label="Password"
           type="password"
           v-model="password"
-          id="testing"
+          id="password"
         ></v-text-field>
           <br>
           <div class="error" v-html="error" />
@@ -37,7 +37,6 @@
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 export default {
-  name: 'HelloWorld',
   data () {
     return {
       email: '',
@@ -48,10 +47,14 @@ export default {
   methods: {
     async login () {
       try {
-        await AuthenticationService.login({
+        const response = await AuthenticationService.login({
           email: this.email,
           password: this.password
         })
+        const token = response.data.token
+        console.log(token)
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
       } catch (error) {
         this.error = error.response.data.error
       }
