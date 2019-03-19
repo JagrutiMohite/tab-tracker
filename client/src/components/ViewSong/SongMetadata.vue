@@ -14,10 +14,31 @@
             <v-btn
             dark
             class="cyan"
-            @click="navigateTO({name: 'Song-edit', params: {songId: song.id}})">
+            :to="{
+              name: 'Song-edit',
+              params () {
+                return {
+                songId: Song.id
+                }
+              }
+            }">
             Edit
             </v-btn>
-            <br>
+            <v-btn
+          v-if="isUserLoggedIn && !bookmark"
+          dark
+          class="cyan"
+          @click="setAsBookmark">
+          Set As Bookmark
+        </v-btn>
+
+        <v-btn
+          v-if="isUserLoggedIn && bookmark"
+          dark
+          class="cyan"
+          @click="unsetAsBookmark">
+          Unset Bookmark
+        </v-btn>
       </v-flex>
       <v-flex xs6>
         <img class="album-image" :src="song.albumImage" />
@@ -27,18 +48,59 @@
   </panel>
 </template>
 <script>
-import Panel from '@/components/Panel'
+import {mapState} from 'vuex'
+import BookmarksService from '@/services/BookmarksService'
+
 export default {
   props: [
     'song'
   ],
-  methods: {
-    navigateTO (route) {
-      this.$router.push(route)
+  data () {
+    return {
+      bookmark: false
     }
   },
-  components: {
-    Panel
+  computed: {
+    ...mapState([
+      'isUserLoggedIn'
+    ])
+  },
+  watch: {
+    async song (value) {
+      if (!this.isUserLoggedIn) {
+        return
+      }
+      try {
+        const query = {
+          songId: this.song.id,
+          userId: this.$store.state.user.id
+        }
+        this.bookmark = (await BookmarksService.index(query)).data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  },
+  methods: {
+    async setAsBookmark () {
+      try {
+        const bookmark = {
+          songId: this.song.id,
+          userId: this.$store.state.user.id
+        }
+        this.bookmark = (await BookmarksService.post(bookmark)).data
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async unsetAsBookmark () {
+      try {
+        await BookmarksService.delete(this.bookmark.id)
+        this.bookmark = null
+      } catch (err) {
+        console.log(err)
+      }
+    }
   }
 }
 </script>
