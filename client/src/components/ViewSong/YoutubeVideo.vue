@@ -3,7 +3,7 @@
     <youtube
     :video-id="youtubeId"
     :player-width="400"
-    :player-height="190">
+    :player-height="280">
     </youtube>
   </panel>
 </template>

@@ -1,6 +1,6 @@
 <template>
-  <v-layout column style="margin-right: 24%">
-    <v-flex xs6 offset-xs3>
+  <v-layout column>
+    <v-flex xs6 offset-xs1>
       <div class="white elevation-2">
         <v-toolbar flat dense class="cyan" dark>
           <v-toolbar-title class="home">{{title}}</v-toolbar-title>

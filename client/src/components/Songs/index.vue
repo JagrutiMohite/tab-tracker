@@ -1,18 +1,38 @@
 <template>
-  <v-layout column>
+   <v-layout>
+    <v-flex xs8 v-if="isUserLoggedIn">
+      <songs-bookmarks />
+      <recently-viewed-songs class="mt-2" />
+    </v-flex>
+
+    <v-flex :class="{
+        xs12: !isUserLoggedIn,
+        xs8: isUserLoggedIn
+      }">
     <songs-search-panel />
       <songs-panel class= "mt-3"/>
+    </v-flex>
   </v-layout>
 </template>
 
 <script>
 import SongsSearchPanel from './SongsSearchPanel'
+import SongsBookmarks from './SongsBookmarks'
+import RecentlyViewedSongs from './RecentlyViewedSongs'
 import SongsPanel from './SongsPanel'
 import SongsService from '@/services/SongsService'
+import {mapState} from 'vuex'
 export default {
   components: {
     SongsPanel,
-    SongsSearchPanel
+    SongsSearchPanel,
+    SongsBookmarks,
+    RecentlyViewedSongs
+  },
+  computed: {
+    ...mapState([
+      'isUserLoggedIn'
+    ])
   },
   data () {
     return {
